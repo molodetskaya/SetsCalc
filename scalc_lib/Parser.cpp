@@ -1,35 +1,47 @@
+#include <Expression.hpp>
+#include <File.hpp>
 #include <Parser.hpp>
 
+#include <algorithm>
+#include <iostream>
+#include <vector>
 
-const std::string Parser::openBrace = "[";
-const std::string Parser::closeBrace = "]";
+namespace {
+
+    const std::string openBrace = "[";
+    const std::string closeBrace = "]";
+    const size_t minimalLength = 5;
+}
 
 std::shared_ptr<Expression> Parser::Parse(std::vector<std::string> _args) {
   
     if(!CheckPunctuation(_args)) {
-        return std::shared_ptr<Expression>();
+        return nullptr;
     }
+
+    args = std::move(_args);
     
-    args = _args;
-    std::shared_ptr<Expression> expression;
+    std::shared_ptr<Expression> expression = std::make_shared<Expression>();
     auto inputPosition = std::begin(args);
 
     if(!ParseInternal(inputPosition, expression)) {
-        return std::shared_ptr<Expression>();
+        return nullptr;
     }
     return expression;
 }
 
-bool Parser::CheckPunctuation(std::vector<std::string> _args) {
+bool Parser::CheckPunctuation(const std::vector<std::string> & _args) {
     
     auto openCount = std::count(std::begin(_args), std::end(_args), openBrace);
     auto closeCount = std::count(std::begin(_args), std::end(_args), closeBrace);
     return openCount == closeCount;
 }
 
-bool Parser::ParseInternal(std::vector<std::string>::iterator & inputPos, std::shared_ptr<Expression> & expression) {
+bool Parser::ParseInternal(std::vector<std::string>::iterator & inputPos, std::shared_ptr<Expression> expression) {
     
-    expression = std::make_shared<Expression>();
+    if (std::distance(inputPos, std::end(args)) < minimalLength) {
+        return false;
+    }
 
     ++inputPos;
 
@@ -44,13 +56,13 @@ bool Parser::ParseInternal(std::vector<std::string>::iterator & inputPos, std::s
     do {
         if (*inputPos == openBrace) {
 
-            std::shared_ptr<Expression> internalExpression;
+            std::shared_ptr<Expression> internalExpression = std::make_shared<Expression>();
 
             if(!ParseInternal(inputPos, internalExpression)) {
 
                 return false;
             }
-            expression->AddSet(internalExpression);
+            expression->AddSet(std::move(internalExpression));
         }
         else if (*inputPos == closeBrace) {
 

@@ -55,6 +55,19 @@ INSTANTIATE_TEST_CASE_P(
             "test_data/file1.txt",
             "test_data/file2.txt",
             "test_data/file3.txt",
+            "]",
+        }
+    ),
+
+    ParserParam(false, false,
+        std::vector<std::string> {
+            "[",
+            "GQ",
+            "0",
+            "test_data/file1.txt",
+            "test_data/file2.txt",
+            "test_data/file3.txt",
+            "]",
         }
     ),
 
@@ -66,6 +79,15 @@ INSTANTIATE_TEST_CASE_P(
             "test_data/file15.txt",
             "test_data/file2.txt",
             "test_data/file3.txt",
+            "]"
+        }
+    ),
+
+    ParserParam(false, false,
+        std::vector<std::string> {
+            "[",
+            "EQ",
+            "2",
             "]"
         }
     )
