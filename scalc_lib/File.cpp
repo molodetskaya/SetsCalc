@@ -12,7 +12,7 @@ File::File(std::string path)
 }
 
 
-bool File::ReadFile () {
+bool File::ReadFile (std::map<int, int>& result) {
 
     if (!std::filesystem::exists(filePath))
     {
@@ -35,8 +35,4 @@ bool File::ReadFile () {
 
     ifs.close();
     return true;
-}
-
-bool File::CalculateResult() {
-    return ReadFile();
 }

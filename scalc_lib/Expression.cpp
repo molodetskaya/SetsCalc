@@ -1,7 +1,13 @@
 #include <Expression.hpp>
+#include <File.hpp>
 
-#include <algorithm>
 #include <map>
+#include <iostream>
+
+Expression::Expression(std::map<int, int> inputSet) {
+
+    result = std::move(inputSet);
+}
 
 bool Expression::SetOperationType(const std::string & operationType) {
 
@@ -17,32 +23,57 @@ bool Expression::SetN(int n) {
     return true;
 }
 
-void Expression::AddSet(std::shared_ptr<Set> set) {
+void Expression::AddSet(Expression set) {
+
     sets.push_back(std::move(set));
 }
 
 bool Expression::CalculateResult() {
     
-    bool calcResult = true;
-    for (auto set: sets)
-    {
-        calcResult &= set->CalculateResult();
-        MergeResult(set->GetResult());
+    if (sets.empty()) {
+
+        return true;
     }
 
+    for (auto & set: sets)
+    {
+        if (!set.CalculateResult()) {
+
+            return false;
+        }
+
+        MergeResult(set.GetResult());
+    }
+        
     const auto count = std::erase_if(result, [&](const auto& item) {
+
         return !operation.Execute(item.second, N);
     });
 
-    return calcResult;
+    return true;
 }
 
 void Expression::MergeResult(const std::map<int, int> & partialResult) {
 
-    for (auto obj: partialResult) {
+    for (const auto & obj: partialResult) {
+
         auto res = result.emplace(obj.first, 1);
         if (!res.second) {
+
             res.first->second++;
         }
     }
+}
+
+void Expression::PrintResult() const {
+
+    for(const auto & obj : result) {
+
+        std::cout << obj.first << " " << std::endl;
+    }
+}
+
+const std::map<int, int> & Expression::GetResult() const {
+
+    return result;
 }

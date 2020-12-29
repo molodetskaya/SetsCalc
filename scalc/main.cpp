@@ -26,19 +26,20 @@ int main(int argc, char *argv[])
 
     Parser parser;
 
-    auto expr = parser.Parse(std::vector<std::string>(argv+1, argv+argc));
+    Expression expression;
+    auto res = parser.Parse(std::vector<std::string>(argv+1, argv+argc), expression);
 
-    if(!expr) {
+    if(!res) {
         std::cerr << "Errors occured during the parsing! Check punctuation" <<std::endl;
         return 1;
     }
 
-    if(!expr->CalculateResult()) {
+    if(!expression.CalculateResult()) {
         std::cerr << "Errors occured during the calculation! Check input arguments" <<std::endl;
         return 1;
     }
 
-    expr->PrintResult();
+    expression.PrintResult();
 
     return 0;
 }

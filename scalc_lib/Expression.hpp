@@ -1,31 +1,40 @@
 #pragma once
 
 #include <Operation.hpp>
-#include <Set.hpp>
-
 
 #include <map>
 #include <memory>
 #include <vector>
 
 
-
-
 /** 
  * @brief Expression class used to perform operations with given Sets
  * 
- * Sets could be also given as Expressions
+ * Sets could be given as Expressions or as a File
  * @author Inna Molodetska
  * @date December 2020
  */
-class Expression : public Set {
+class Expression {
 
   public:
+
+    Expression() = default;
+
+    Expression(Expression && expression) = default;
+
+    Expression(const Expression & expression) = delete;
+
+    Expression & operator = (Expression && expression) = default;
+
+    Expression & operator = (const Expression & expression) = delete;
+
     /**
      * @brief Construct a new Expression object
      * 
+     * Calculation will not be executed on this Expression
+     * @param inputSet source of data for the set
      */
-    Expression() = default;
+    Expression(std::map<int, int> inputSet);
 
     /**
      * @brief SetOperationType define operation
@@ -49,14 +58,27 @@ class Expression : public Set {
      * @param set file or another expression
      * @return true if file exists
      */
-    void AddSet(std::shared_ptr<Set> set);
+    void AddSet(Expression set);
 
     /**
-     * @brief CalculateResult execute operation on given arguments
+     * @brief CalculateResult execute operation on nested Sets
      * 
-     * @return true if caculation was done without errors
+     * @return true if expression has valid result
      */
     bool CalculateResult();
+
+    /**
+     * @brief Print calculation results in a row
+     * 
+     */
+    void PrintResult() const;
+    
+    /**
+     * @brief GetResults provide read access to results map
+     * 
+     * @return const link to map with results
+     */
+    const std::map<int, int> & GetResult() const;
 
   private:
 
@@ -71,5 +93,7 @@ class Expression : public Set {
 
     int N = 0; /**value for comparison*/
 
-    std::vector<std::shared_ptr<Set>> sets; /**files or expression as sets of data*/
+    std::vector<Expression> sets; /**files or expression as sets of data*/
+   
+    std::map<int, int> result;/**map of pairs value and counter*/
 };

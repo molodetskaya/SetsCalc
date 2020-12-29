@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Set.hpp>
+#include <map>
 
 /**
  * @brief File class used to read integers from the file
@@ -9,7 +9,7 @@
  * @author Inna Molodetska
  * @date December 2020
  */
-class File : public Set {
+class File{
 
   public:
   
@@ -25,22 +25,16 @@ class File : public Set {
      * 
      */
     ~File() = default;
-    
-    /**
-     * @brief CalculateResult interface to read integers from File to result map
-     * 
-     * @return true if file exists and could be open
-     */
-    bool CalculateResult();
-  
-  private:
 
     /**
      * @brief ReadFile read integers from File to result map
      * 
+     * @param result reference to the destination map
      * @return true if file exists and could be open
      */
-    bool ReadFile();
+    bool ReadFile(std::map<int, int>& result);
+    
+  private:
   
     std::string filePath;/** path to file which will be used as source*/
 };

@@ -6,8 +6,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(scalc)
 
-#include_directories(src)
-
 add_subdirectory (scalc)
 add_subdirectory (scalc_lib)
 add_subdirectory (test)

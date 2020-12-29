@@ -13,21 +13,22 @@ namespace {
     const size_t minimalLength = 5;
 }
 
-std::shared_ptr<Expression> Parser::Parse(std::vector<std::string> _args) {
+bool Parser::Parse(std::vector<std::string> _args, Expression & expression) {
   
+
     if(!CheckPunctuation(_args)) {
-        return nullptr;
+        return false;
     }
 
     args = std::move(_args);
-    
-    std::shared_ptr<Expression> expression = std::make_shared<Expression>();
     auto inputPosition = std::begin(args);
 
     if(!ParseInternal(inputPosition, expression)) {
-        return nullptr;
+
+        return false;
     }
-    return expression;
+
+    return true;
 }
 
 bool Parser::CheckPunctuation(const std::vector<std::string> & _args) {
@@ -37,7 +38,7 @@ bool Parser::CheckPunctuation(const std::vector<std::string> & _args) {
     return openCount == closeCount;
 }
 
-bool Parser::ParseInternal(std::vector<std::string>::iterator & inputPos, std::shared_ptr<Expression> expression) {
+bool Parser::ParseInternal(std::vector<std::string>::iterator & inputPos, Expression & expression) {
     
     if (std::distance(inputPos, std::end(args)) < minimalLength) {
         return false;
@@ -45,24 +46,24 @@ bool Parser::ParseInternal(std::vector<std::string>::iterator & inputPos, std::s
 
     ++inputPos;
 
-    if(!expression->SetOperationType(*inputPos++)) {
+    if(!expression.SetOperationType(*inputPos++)) {
         return false;
     }
 
-    if (!expression->SetN(std::stoi(*inputPos++))) {
+    if (!expression.SetN(std::stoi(*inputPos++))) {
         return false;
     }
 
     do {
         if (*inputPos == openBrace) {
 
-            std::shared_ptr<Expression> internalExpression = std::make_shared<Expression>();
+            Expression internalExpression;
 
             if(!ParseInternal(inputPos, internalExpression)) {
 
                 return false;
             }
-            expression->AddSet(std::move(internalExpression));
+            expression.AddSet(std::move(internalExpression));
         }
         else if (*inputPos == closeBrace) {
 
@@ -70,7 +71,13 @@ bool Parser::ParseInternal(std::vector<std::string>::iterator & inputPos, std::s
         }
         else {
 
-            expression->AddSet(std::shared_ptr<Set>(new File(*inputPos)));
+            std::map<int,int> inputSet;    
+            File file(std::move(*inputPos));
+            if (!file.ReadFile(inputSet)) {
+                return false;
+            }
+
+            expression.AddSet(Expression(std::move(inputSet)));
         }
     } while(++inputPos < std::end(args));
 

@@ -26,10 +26,10 @@ TEST_P(ParseAndCalcParamTest, SimpleExpression) {
     const auto param = GetParam();
 
     Parser parser;
-    auto expression = parser.Parse(param.args);
-    ASSERT_TRUE(expression);
-    ASSERT_TRUE(expression->CalculateResult());
-    auto actRes = expression->GetResult();
+    Expression expression;
+    ASSERT_TRUE(parser.Parse(param.args, expression));
+    ASSERT_TRUE(expression.CalculateResult());
+    auto actRes = expression.GetResult();
 
     ASSERT_TRUE(std::equal(std::begin(param.expRes), std::end(param.expRes), std::begin(actRes)));
 }

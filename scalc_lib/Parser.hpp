@@ -22,7 +22,7 @@ class Parser
      * @param args vector of arguments (one argument in one raw)
      * @return shared_ptr to Expression (could contain another expressions)
      */
-    std::shared_ptr<Expression> Parse(std::vector<std::string> _args);
+    bool Parse(std::vector<std::string> _args, Expression & expression);
 
   private:
     /**
@@ -32,7 +32,7 @@ class Parser
      * @param expression out param link to shared_ptr where expression will be saved
      * @return true if args parsed without errors
      */
-    bool ParseInternal(std::vector<std::string>::iterator & inputPos, std::shared_ptr<Expression> expression);
+    bool ParseInternal(std::vector<std::string>::iterator & inputPos, Expression & expression);
 
     /**
      * @brief PrintArgs print vector starting from the input iterator
